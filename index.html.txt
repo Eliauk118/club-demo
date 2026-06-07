@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>校园社团活动智能策划库 · Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #1F4E9D 0%, #2A66B8 100%); min-height: 100vh; color: #1A1A2E; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.header { background: rgba(255,255,255,0.98); border-radius: 16px; padding: 24px 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.logo { display: flex; align-items: center; gap: 14px; }
+.logo-icon { width: 52px; height: 52px; border-radius: 12px; background: linear-gradient(135deg, #1F4E9D, #FF7A2E); display: flex; align-items: center; justify-content: center; font-size: 26px; }
+.logo-text h1 { font-size: 20px; color: #1F4E9D; }
+.logo-text p { font-size: 12px; color: #6B7280; margin-top: 2px; }
+.header-badge { background: #FF7A2E; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.main { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+.chat-panel { background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; height: calc(100vh - 140px); min-height: 600px; }
+.chat-header { background: #1F4E9D; color: white; padding: 14px 18px; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.chat-header::before { content: ''; width: 8px; height: 8px; background: #2EB86B; border-radius: 50%; box-shadow: 0 0 8px #2EB86B; }
+.chat-body { flex: 1; overflow-y: auto; padding: 16px; background: #F5F7FA; }
+.msg { margin-bottom: 14px; animation: fadeIn 0.4s; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(8px);} to {opacity:1; transform:translateY(0);} }
+.msg-ai { display: flex; gap: 8px; align-items: flex-start; }
+.msg-ai .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #1F4E9D, #FF7A2E); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+.msg-ai .bubble { background: white; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.6; max-width: 240px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.msg-user { display: flex; justify-content: flex-end; }
+.msg-user .bubble { background: #1F4E9D; color: white; padding: 10px 14px; border-radius: 12px; font-size: 13px; max-width: 240px; }
+.chat-input { border-top: 1px solid #E5E7EB; padding: 14px; background: white; }
+.input-box { display: flex; gap: 8px; align-items: center; background: #F5F7FA; border-radius: 10px; padding: 8px 12px; }
+.input-box input { flex: 1; border: none; background: transparent; outline: none; font-size: 13px; }
+.send-btn { background: #1F4E9D; color: white; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.workspace { background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); overflow: hidden; height: calc(100vh - 140px); min-height: 600px; display: flex; flex-direction: column; }
+.workspace-header { border-bottom: 1px solid #E5E7EB; padding: 0 20px; display: flex; gap: 4px; background: #FAFBFC; overflow-x: auto; }
+.tab { padding: 14px 18px; cursor: pointer; font-size: 13px; color: #6B7280; border-bottom: 3px solid transparent; transition: all 0.2s; font-weight: 500; white-space: nowrap; }
+.tab:hover { color: #1F4E9D; }
+.tab.active { color: #1F4E9D; border-bottom-color: #FF7A2E; background: white; font-weight: bold; }
+.workspace-body { flex: 1; overflow-y: auto; padding: 24px; }
+.steps { display: flex; gap: 0; margin-bottom: 24px; background: #F5F7FA; border-radius: 10px; padding: 4px; }
+.step { flex: 1; padding: 10px 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 12px; color: #6B7280; }
+.step.active { background: #1F4E9D; color: white; font-weight: bold; box-shadow: 0 2px 8px rgba(31,78,157,0.3); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.form-item label { display: block; font-size: 12px; color: #6B7280; margin-bottom: 6px; font-weight: 500; }
+.form-item input, .form-item select { width: 100%; padding: 10px 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 13px; outline: none; }
+.form-item input:focus, .form-item select:focus { border-color: #1F4E9D; }
+.btn-primary { background: linear-gradient(135deg, #1F4E9D, #2A66B8); color: white; border: none; padding: 12px 28px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(31,78,157,0.3); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: white; color: #1F4E9D; border: 1px solid #1F4E9D; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-right: 8px; }
+.result-card { background: #FAFBFC; border-radius: 12px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #1F4E9D; }
+.result-card h3 { color: #1F4E9D; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.result-card .badge { background: #FF7A2E; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+.result-card p, .result-card li { font-size: 13px; line-height: 1.8; color: #1A1A2E; }
+.result-card ul { padding-left: 20px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.kpi { background: linear-gradient(135deg, #F5F7FA, #fff); border: 1px solid #E5E7EB; padding: 16px; border-radius: 12px; text-align: center; }
+.kpi .value { font-size: 24px; font-weight: bold; color: #1F4E9D; }
+.kpi .label { font-size: 11px; color: #6B7280; margin-top: 4px; }
+.kpi.green .value { color: #2EB86B; }
+.kpi.orange .value { color: #FF7A2E; }
+.kpi.red .value { color: #E04A4A; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { background: #1F4E9D; color: white; padding: 10px; text-align: left; }
+td { padding: 8px 10px; border-bottom: 1px solid #E5E7EB; }
+tr:hover { background: #F5F7FA; }
+.loading { text-align: center; padding: 40px; color: #6B7280; }
+.spinner { width: 40px; height: 40px; border: 3px solid #E5E7EB; border-top-color: #1F4E9D; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.progress-list { margin-top: 16px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
+.progress-item { padding: 8px; font-size: 12px; color: #2EB86B; }
+.copy-card { background: white; border: 1px solid #E5E7EB; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+.copy-card .title { font-weight: bold; color: #1F4E9D; font-size: 13px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.copy-card .content { font-size: 12px; line-height: 1.7; color: #1A1A2E; background: #F5F7FA; padding: 10px; border-radius: 6px; white-space: pre-wrap; }
+.copy-btn { background: #FF7A2E; color: white; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
+.hint { background: #FFF8E1; border-left: 3px solid #FFA726; padding: 12px 16px; border-radius: 8px; font-size: 12px; color: #6B5500; margin-bottom: 16px; }
+.empty-state { text-align: center; padding: 60px 20px; color: #9CA3AF; }
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+@media (max-width: 900px) { .main { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: repeat(2, 1fr); } .form-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<div class="logo">
+<div class="logo-icon">🦝</div>
+<div class="logo-text"><h1>校园社团活动智能策划库</h1><p>Campus Club Activity Smart Planning Hub · Powered by 办公小浣熊</p></div>
+</div>
+<div class="header-badge">DEMO · v1.0</div>
+</div>
+<div class="main">
+<div class="chat-panel">
+<div class="chat-header">💬 智能助手 · 在线</div>
+<div class="chat-body" id="chatBody">
+<div class="msg msg-ai"><div class="avatar">🦝</div><div class="bubble">你好！我是社团活动策划助手。<br>请在右侧填写活动基本信息，我会为你生成完整策划包 ✨</div></div>
+</div>
+<div class="chat-input"><div class="input-box"><input type="text" id="chatInput" placeholder="输入活动需求或问题…"><button class="send-btn" onclick="sendMsg()">➤</button></div></div>
+</div>
+<div class="workspace">
+<div class="workspace-header">
+<div class="tab active" onclick="switchTab(0)">📝 需求输入</div>
+<div class="tab" onclick="switchTab(1)">📋 活动方案</div>
+<div class="tab" onclick="switchTab(2)">💰 预算明细</div>
+<div class="tab" onclick="switchTab(3)">📣 宣传文案</div>
+<div class="tab" onclick="switchTab(4)">📊 复盘模板</div>
+<div class="tab" onclick="switchTab(5)">📈 数据看板</div>
+</div>
+<div class="workspace-body" id="workspaceBody"></div>
+</div>
+</div>
+</div>
+<script>
+let formData = { title: 'AI挑战赛', type: '文学社', people: '200', budget: '500', venue: '实验楼201', time: '2026-06-18 18:00', audience: '全校学生' };
+let currentTab = 0, generated = false;
+function switchTab(idx){currentTab=idx;document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===idx));renderTab();}
+function renderTab(){const body=document.getElementById('workspaceBody');if(currentTab===0){body.innerHTML=renderForm();return;}if(!generated){body.innerHTML=renderEmpty();return;}if(currentTab===1)body.innerHTML=renderPlan();if(currentTab===2)body.innerHTML=renderBudget();if(currentTab===3)body.innerHTML=renderCopy();if(currentTab===4)body.innerHTML=renderReview();if(currentTab===5)body.innerHTML=renderDashboard();}
+function renderEmpty(){return '<div class="empty-state"><div class="icon">📋</div><h3 style="color:#6B7280;">请先填写需求并生成方案</h3><p style="margin-top:8px;font-size:13px;">前往「需求输入」标签页，30秒生成完整策划包</p><button class="btn-primary" style="margin-top:20px;" onclick="switchTab(0)">前往填写 →</button></div>';}
+function renderForm(){return '<div class="steps"><div class="step active">① 填写需求</div><div class="step">② AI生成</div><div class="step">③ 查看交付物</div><div class="step">④ 一键导出</div></div><div class="hint">💡 演示数据已自动填入，可直接点击「一键生成」体验，或修改后再生成</div><div class="form-grid"><div class="form-item"><label>活动主题</label><input type="text" value="'+formData.title+'" onchange="formData.title=this.value"></div><div class="form-item"><label>社团类型</label><select onchange="formData.type=this.value"><option '+(formData.type=='文学社'?'selected':'')+'>文学社</option><option>吉他社</option><option>动漫社</option><option>志愿者协会</option><option>电竞社</option><option>辩论队</option><option>摄影社</option></select></div><div class="form-item"><label>参与人数</label><input type="number" value="'+formData.people+'" onchange="formData.people=this.value"></div><div class="form-item"><label>总预算 (元)</label><input type="number" value="'+formData.budget+'" onchange="formData.budget=this.value"></div><div class="form-item"><label>举办场地</label><input type="text" value="'+formData.venue+'" onchange="formData.venue=this.value"></div><div class="form-item"><label>活动时间</label><input type="text" value="'+formData.time+'" onchange="formData.time=this.value"></div><div class="form-item" style="grid-column:1/-1;"><label>目标受众</label><input type="text" value="'+formData.audience+'" onchange="formData.audience=this.value"></div></div><div style="text-align:center;margin-top:24px;"><button class="btn-primary" onclick="generateAll()">✨ 一键生成完整策划包</button><p style="font-size:11px;color:#9CA3AF;margin-top:10px;">预计耗时 30 秒 · 替代传统人工 6+ 小时</p></div>';}
+function generateAll(){const body=document.getElementById('workspaceBody');body.innerHTML='<div class="loading"><div class="spinner"></div><h3 style="color:#1F4E9D;">AI 多模块协同生成中…</h3><div class="progress-list" id="progress"></div></div>';const steps=['📝 调用文案模块：撰写活动方案…','💰 调用表格模块：编制预算明细…','📣 调用文案模块：生成三平台宣传文案…','📋 调用表格模块：设计报名表单字段…','📊 调用数据模块：构建复盘分析模板…','✅ 整合校验：符合高校团委审批规范'];const pl=document.getElementById('progress');let i=0;addChatMsg('ai','正在为「'+formData.title+'」生成策划包，请稍候…');const it=setInterval(()=>{if(i<steps.length){pl.innerHTML+='<div class="progress-item">✓ '+steps[i]+'</div>';i++;}else{clearInterval(it);generated=true;setTimeout(()=>{addChatMsg('ai','✅ 全部生成完成！请点击上方标签查看 5 类交付物 →');switchTab(1);},400);}},500);}
+function renderPlan(){return '<div class="hint">📌 以下为 AI 生成的完整活动方案，符合高校团委审批规范，可直接复制提交</div><div class="result-card"><h3>🎯 活动概要 <span class="badge">已生成</span></h3><p><b>活动名称：</b>'+formData.title+'（"AI遇见文学"挑战赛）</p><p><b>主办方：</b>'+formData.type+'</p><p><b>时间地点：</b>'+formData.time+' · '+formData.venue+'</p><p><b>规模：</b>'+formData.people+'人 · '+formData.audience+'</p></div><div class="result-card"><h3>📖 活动背景</h3><p>AIGC技术席卷创作领域，"AI能否取代人类作家"成为热议。文学社主动拥抱新技术，发起首届"AI×文学"挑战赛，让同学们在人机协作中重新思考文字的温度。</p></div><div class="result-card"><h3>📅 活动流程（180分钟）</h3><ul><li>17:30-18:00 签到入场（扫码签到 + 领题目卡）</li><li>18:00-18:10 开场介绍（破冰 + 规则讲解）</li><li>18:10-18:25 主题分享："AI能写出好诗吗？"</li><li>18:25-19:25 <b>赛段一：人机对决</b> · 同题200字微小说匿名投票</li><li>19:35-20:35 <b>赛段二：协作共创</b> · 4人小组+AI共创</li><li>20:35-20:55 作品展示 & 评委点评</li><li>20:55-21:00 颁奖 & 合影</li></ul></div><div class="result-card"><h3>👥 人员分工（11人）</h3><ul><li><b>总负责人</b>(1) · 总协调与应急决策</li><li><b>策划组</b>(2) · 方案撰写 + PPT制作</li><li><b>宣传组</b>(2) · 海报 + 推文 + 现场摄影</li><li><b>赛务组</b>(3) · 题目 + 计时 + 投票统计</li><li><b>后勤组</b>(2) · 场地布置 + 物料采购</li><li><b>技术组</b>(1) · 设备调试 + AI演示</li></ul></div><div class="result-card"><h3>⚠️ 风险预案</h3><ul><li>设备故障 → 备用便携音响 + 个人热点</li><li>AI工具卡顿 → 备 3 款工具（豆包/Kimi/通义）</li><li>到场不足 → 提前 3 轮预热 + 机动观众 10 人</li><li>突发情况 → 启动腾讯会议 Plan B</li></ul></div><button class="btn-secondary">📄 导出 Word</button><button class="btn-secondary">📋 复制全文</button>';}
+function renderBudget(){const rows=[['宣传物料','A3海报彩印',5.0,10,50],['宣传物料','A4赛题卡/桌牌',0.3,100,30],['宣传物料','签到表/工作证',0.2,50,10],['场地布置','拉花气球套装',30.0,1,30],['场地布置','KT板背景喷绘',60.0,1,60],['奖品','一等奖文创套装',35.0,1,35],['奖品','二等奖精装书籍',25.0,2,50],['奖品','三等奖书签明信片',10.0,3,30],['奖品','最佳人气奖礼盒',20.0,1,20],['奖品','参与奖贴纸',0.5,60,30],['物资耗材','矿泉水',1.5,20,30],['物资耗材','稿纸/中性笔',0.5,100,50],['物资耗材','投票贴纸',15.0,1,15],['应急','机动费用','-','-',60]];let trs=rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r[0]+'</td><td>'+r[1]+'</td><td>¥'+r[2]+'</td><td>'+r[3]+'</td><td><b>¥'+r[4]+'</b></td></tr>').join('');return '<div class="hint">💰 总预算 ¥500，已按高校团委审批口径分类，可直接提交</div><div class="kpi-grid"><div class="kpi"><div class="value">¥500</div><div class="label">预算总额</div></div><div class="kpi green"><div class="value">14</div><div class="label">明细项</div></div><div class="kpi orange"><div class="value">4</div><div class="label">分类</div></div><div class="kpi"><div class="value">¥60</div><div class="label">应急预留</div></div></div><table><thead><tr><th>#</th><th>类别</th><th>项目</th><th>单价</th><th>数量</th><th>小计</th></tr></thead><tbody>'+trs+'<tr style="background:#1F4E9D;color:white;"><td colspan="5"><b>合计</b></td><td><b>¥500</b></td></tr></tbody></table><div style="margin-top:16px;"><button class="btn-secondary">📊 导出 Excel</button><button class="btn-secondary">📋 复制表格</button></div>';}
+function renderCopy(){return '<div class="hint">📣 已生成三种平台风格文案，适配学生语态，可直接发布</div><div class="copy-card"><div class="title">📰 公众号推文（正式规范风） <button class="copy-btn">复制</button></div><div class="content">【活动预告】当AI遇上文学，谁是真正的"造字者"？\n\n当ChatGPT能在3秒内写出一首十四行诗，\n我们是该为文学的未来担忧，还是张开双臂拥抱新的创作可能？\n\n📍 6月18日 18:00 · 实验楼201\n🎯 你将体验：人机对决 + 协作共创 + AI实用干货\n🏆 奖品：文创礼盒 / 精装好书 / 定制书签\n\n文字不会被AI取代，但会用AI的人，将取代不会用AI的人。\n我们201见。</div></div><div class="copy-card"><div class="title">💬 QQ空间说说（活泼互动风） <button class="copy-btn">复制</button></div><div class="content">💥 重磅！文学社放大招了！\n\n这次我们不写诗、不读散文，我们要——和AI掰头！ 🤖⚔️✍️\n\n📍 6.18 周四 18:00 实验楼201\n🎮 玩法：人机PK + AI协作创作\n🎁 奖品：文创、好书、签字笔，统统带回家\n💰 0元报名 · 全校通吃！\n\n私信"AI挑战"领取报名链接，限200人 🔥\n#大学生活 #AI挑战赛 #文学社团</div></div><div class="copy-card"><div class="title">🌿 朋友圈（轻松走心风） <button class="copy-btn">复制</button></div><div class="content">听说有人想让AI写情书。\n那……让AI替我们写青春，可以吗？\n\n一支笔，一台电脑，一群人。\n在AI写满整个世界之前，\n我们想留下一点，属于人的句子。\n\n📍6/18 18:00 实验楼201｜评论区扣1拉你进群</div></div>';}
+function renderReview(){return '<div class="hint">📊 活动结束后48h内填写，自动生成结构化复盘报告</div><div class="result-card"><h3>📈 数据统计模板</h3><table><thead><tr><th>指标</th><th>目标值</th><th>实际值</th><th>完成率</th></tr></thead><tbody><tr><td>报名人数</td><td>200</td><td>205</td><td style="color:#2EB86B;"><b>102.5%</b></td></tr><tr><td>实际到场</td><td>180</td><td>187</td><td style="color:#2EB86B;"><b>103.9%</b></td></tr><tr><td>有效作品</td><td>40</td><td>46</td><td style="color:#2EB86B;"><b>115%</b></td></tr><tr><td>公众号阅读</td><td>1500</td><td>1820</td><td style="color:#2EB86B;"><b>121.3%</b></td></tr><tr><td>新增关注</td><td>80</td><td>96</td><td style="color:#2EB86B;"><b>120%</b></td></tr><tr><td>预算使用</td><td>≤500</td><td>487</td><td style="color:#2EB86B;"><b>97.4%</b></td></tr></tbody></table></div><div class="result-card"><h3>💡 SWOT 改进建议</h3><ul><li>✅ <b>保留：</b>人机对决环节互动性强，建议下次延长 10 分钟</li><li>❌ <b>优化：</b>签到环节拥堵，下次改为双通道扫码</li><li>💡 <b>机会：</b>理工科参与度超预期，可联合计算机协会共办</li><li>⚠️ <b>规避：</b>AI工具网络不稳，须提前测试+备离线方案</li></ul></div><button class="btn-secondary">📊 导出复盘报告</button><button class="btn-secondary">🗂️ 沉淀至知识库</button>';}
+function renderDashboard(){const data=[['方案撰写',180,8],['预算编制',90,5],['宣传文案',120,6],['报名设计',60,3],['复盘归档',150,8]];const max=180;const bars=data.map(d=>'<div style="margin-bottom:10px;"><div style="font-size:12px;margin-bottom:4px;">'+d[0]+'</div><div style="display:flex;gap:4px;align-items:center;"><div style="background:#E04A4A;height:18px;width:'+(d[1]/max*70)+'%;border-radius:3px;"></div><span style="font-size:11px;color:#E04A4A;">'+d[1]+'min</span></div><div style="display:flex;gap:4px;align-items:center;margin-top:2px;"><div style="background:#1F4E9D;height:18px;width:'+(d[2]/max*70)+'%;border-radius:3px;"></div><span style="font-size:11px;color:#1F4E9D;">'+d[2]+'min</span></div></div>').join('');return '<div class="hint">📈 与传统人工策划对比的实测数据看板</div><div class="kpi-grid"><div class="kpi green"><div class="value">↓95%</div><div class="label">策划耗时</div></div><div class="kpi"><div class="value">↑138%</div><div class="label">过审率</div></div><div class="kpi orange"><div class="value">↓80%</div><div class="label">人力投入</div></div><div class="kpi red"><div class="value">¥1200</div><div class="label">单场节省</div></div></div><div class="result-card"><h3>⏱️ 各环节耗时对比（分钟）</h3>'+bars+'<p style="margin-top:14px;font-size:12px;color:#6B7280;"><span style="color:#E04A4A;">■</span> 传统人工 600 分钟　<span style="color:#1F4E9D;">■</span> 智能策划库 30 分钟</p></div><div class="result-card"><h3>🎯 核心指标提升</h3><table><thead><tr><th>指标</th><th>使用前</th><th>使用后</th><th>变化</th></tr></thead><tbody><tr><td>策划耗时</td><td>5-7天</td><td>30分钟</td><td style="color:#2EB86B;"><b>↓ 95%</b></td></tr><tr><td>团委过审率</td><td>42%</td><td>100%</td><td style="color:#2EB86B;"><b>↑ 138%</b></td></tr><tr><td>活动到场率</td><td>65%</td><td>93.5%</td><td style="color:#2EB86B;"><b>↑ 44%</b></td></tr><tr><td>复盘完成率</td><td>30%</td><td>100%</td><td style="color:#2EB86B;"><b>↑ 233%</b></td></tr><tr><td>人力投入</td><td>5人</td><td>1人</td><td style="color:#2EB86B;"><b>↓ 80%</b></td></tr></tbody></table></div>';}
+function addChatMsg(role,text){const body=document.getElementById('chatBody');const div=document.createElement('div');div.className='msg msg-'+role;if(role==='ai')div.innerHTML='<div class="avatar">🦝</div><div class="bubble">'+text+'</div>';else div.innerHTML='<div class="bubble">'+text+'</div>';body.appendChild(div);body.scrollTop=body.scrollHeight;}
+function sendMsg(){const inp=document.getElementById('chatInput');if(!inp.value.trim())return;addChatMsg('user',inp.value);const val=inp.value;inp.value='';setTimeout(()=>{let reply='收到！如需重新生成，请前往「需求输入」修改后点击生成。';if(val.indexOf('预算')>=0)reply='当前预算 ¥500 已合规分配至 4 大类，可在「预算明细」查看完整表格';else if(val.indexOf('文案')>=0)reply='已为你生成 3 平台文案，请查看「宣传文案」标签';else if(val.indexOf('复盘')>=0)reply='复盘模板已就绪，含数据统计+SWOT分析，详见「复盘模板」';else if(val.indexOf('帮助')>=0||val.indexOf('?')>=0)reply='我可以帮你：生成方案/编预算/写文案/做复盘，请直接告诉我活动需求 ✨';addChatMsg('ai',reply);},600);}
+document.getElementById('chatInput').addEventListener('keypress',function(e){if(e.key==='Enter')sendMsg();});
+renderTab();
+</script>
+</body>
+</html>
